@@ -159,9 +159,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# Videos
+*.mp4
+
+# Zip
+*.zip
+
 # Ignored files
-output2.mp4
-output3.mp4
-output5.mp4
-output6.mp4
-output7.mp4
