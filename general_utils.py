@@ -9,6 +9,8 @@ import os
 import cv2
 import numpy as np
 
+from ultralytics import YOLO
+
 from math import ceil
 
 
@@ -80,7 +82,7 @@ def read_image(path: str, name: str) -> np.ndarray:
     return cv2.imread(full_file_name)
 
 
-def read_frame(video: cv2.VideoCapture, fps: float | None = None) -> np.ndarray | None:
+def read_frame(video: cv2.VideoCapture, fps):
     """
     Read the frames of a video.
 
