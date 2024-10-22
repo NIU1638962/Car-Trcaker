@@ -40,6 +40,29 @@ def create_path(path: str) -> None:
 
 
 def load_video(path: str, name: str) -> cv2.VideoCapture:
+    """
+    Load a video into OpenCV video object.
+
+    Parameters
+    ----------
+    path : str
+        Path to the video file.
+    name : str
+        Name of the video file.
+
+    Raises
+    ------
+    NotADirectoryError
+        File path doesn't lead to a directory.
+    FileNotFoundError
+       File with given name not found in the given directory or is not a file.
+
+    Returns
+    -------
+    OpenCV VideoCapture
+        Video object containing the video frames and other information.
+
+    """
     if not os.path.isdir(path):
         raise NotADirectoryError(f'"{path}" path is not a directory.')
 
@@ -64,6 +87,13 @@ def read_image(path: str, name: str) -> np.ndarray:
     name : string
         Name of the image file.
 
+    Raises
+    ------
+    NotADirectoryError
+        File path doesn't lead to a directory.
+    FileNotFoundError
+        File with given name not found in the given directory or is not a file.
+
     Returns
     -------
     numpy array
@@ -82,7 +112,8 @@ def read_image(path: str, name: str) -> np.ndarray:
     return cv2.imread(full_file_name)
 
 
-def read_frame(video: cv2.VideoCapture, fps):
+# def read_frame(video: cv2.VideoCapture, fps: float | None) -> np.ndarray | None:
+def read_frame(video: cv2.VideoCapture, fps: float) -> np.ndarray:
     """
     Read the frames of a video.
 
@@ -92,7 +123,7 @@ def read_frame(video: cv2.VideoCapture, fps):
     ----------
     video : cv2.VideoCapture
         VideoCaputer bject from OpenCV containing the video's frame to be read.
-    fps : float | None, optional
+    fps : float or None, optional
         New framerate to read to. If new framerate is bigger than original
         video's fraemrate, original video's framerate will be used. If None
         given, original video's framerate used. The default is None.
@@ -109,7 +140,12 @@ def read_frame(video: cv2.VideoCapture, fps):
 
     frame_selector = ceil(video.get(cv2.CAP_PROP_FPS) / fps)
 
-    while (video.get(cv2.CAP_PROP_POS_FRAMES) % frame_selector != 0) and (video.get(cv2.CAP_PROP_POS_FRAMES) < video.get(cv2.CAP_PROP_FRAME_COUNT)):
+    while (
+            video.get(cv2.CAP_PROP_POS_FRAMES) % frame_selector != 0
+    ) and (
+        video.get(cv2.CAP_PROP_POS_FRAMES) < video.get(
+            cv2.CAP_PROP_FRAME_COUNT)
+    ):
         video.read()
 
     __, frame = video.read()
@@ -143,7 +179,7 @@ def remove_directory(path: str) -> None:
     os.rmdir(path)
 
 
-def save_image(image: np.array, path: str, name: str) -> bool:
+def save_image(image: np.array, path: str, name: str) -> None:
     """
     Save as a file a given image using OpenCV.
 
@@ -158,15 +194,12 @@ def save_image(image: np.array, path: str, name: str) -> bool:
 
     Returns
     -------
-    bool
-        If the funtion was able to save the image or not.
+    None.
 
     """
     create_path(path)
 
     cv2.imwrite(os.path.join(path, name), image)
-
-    return True
 
 
 def show_image_on_window(image: np.array, window_name: str = "Image",
