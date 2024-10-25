@@ -255,19 +255,19 @@ def background_substraction(frame, last_frame):
 
     gris1 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gris2 = cv2.cvtColor(last_frame, cv2.COLOR_BGR2GRAY)
+    diferencia = cv2.absdiff(gris1, gris2)
     
-    #diferencia = cv2.absdiff(gris1, gris2)
-    
-    diferencia = np.abs(frame-last_frame)
+    #diferencia = np.abs(frame-last_frame)
     
     _, mascara_movimiento = cv2.threshold(diferencia, 30, 255, cv2.THRESH_BINARY)
     mascara_movimiento = cv2.dilate(mascara_movimiento, None, iterations=2)
-    #imagen_sin_estacionarios = cv2.bitwise_and(gris1, mascara_movimiento)
+    #mascara_movimiento = cv2.cvtColor(mascara_movimiento, cv2.COLOR_GRAY2BGR)
     
-    cv2.imshow('f', mascara_movimiento)
+    #frame = cv2.bitwise_and(frame, mascara_movimiento)
+    
+    cv2.imshow('Image', mascara_movimiento)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    
     
     return mascara_movimiento
 

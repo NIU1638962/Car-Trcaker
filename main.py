@@ -55,15 +55,19 @@ def main() -> None:
             
             while frame is not None:
                 frame = read_frame(video, PROCESSING_FPS)
-                gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                #gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                
                 
                 movement_mask = background_substraction(frame, last_frame)
                 
                 res, bounding_boxes = det.detect_cars(frame)
                 
-                current_state, boxes = get_centroids(bounding_boxes, movement_mask, gray_frame)
                 
-                show_image_with_boxes(frame, boxes)    
+                current_state, boxes = get_centroids(bounding_boxes, movement_mask)
+                
+                
+                
+                show_image_with_boxes(frame.copy(), boxes)    
                 
                 
                 if(isinstance(last_state, np.ndarray)):
