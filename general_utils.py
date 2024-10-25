@@ -14,6 +14,7 @@ from ultralytics import YOLO
 from math import ceil
 
 
+
 def create_path(path: str) -> None:
     """
     Create a directory.
@@ -149,8 +150,10 @@ def read_frame(video: cv2.VideoCapture, fps: float) -> np.ndarray:
         video.read()
 
     __, frame = video.read()
+    
 
     return frame
+
 
 
 def remove_directory(path: str) -> None:
@@ -230,6 +233,43 @@ def show_image_on_window(image: np.array, window_name: str = "Image",
     cv2.waitKey(0)
     cv2.destroyWindow(window_name)
 
+
+def show_image_with_boxes(frame , boxes):
+    for box in boxes:
+        x_min, y_min, x_max, y_max = np.array(box.xyxy, dtype='int32').squeeze(0)
+        clase = box.cls[0]
+        conf = box.conf[0]
+        # Dibujar el rectángulo
+        cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+        # Añadir texto (clase y confianza)
+        print(x_min, y_min, x_max, y_max, clase, conf)
+        cv2.putText(frame, f"{clase}: {conf:.2f}", (x_min, y_min - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    
+    cv2.imshow('Image', frame)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
+    
+def background_substraction(frame, last_frame): 
+
+    gris1 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gris2 = cv2.cvtColor(last_frame, cv2.COLOR_BGR2GRAY)
+    
+    #diferencia = cv2.absdiff(gris1, gris2)
+    
+    diferencia = np.abs(frame-last_frame)
+    
+    _, mascara_movimiento = cv2.threshold(diferencia, 30, 255, cv2.THRESH_BINARY)
+    mascara_movimiento = cv2.dilate(mascara_movimiento, None, iterations=2)
+    #imagen_sin_estacionarios = cv2.bitwise_and(gris1, mascara_movimiento)
+    
+    cv2.imshow('f', mascara_movimiento)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
+    
+    return mascara_movimiento
 
 if __name__ == "__main__":
     print(

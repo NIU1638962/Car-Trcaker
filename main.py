@@ -8,10 +8,11 @@ import cv2
 import os
 import re
 
-from general_utils import load_video, read_frame, show_image_on_window
-
-
+from general_utils import load_video, read_frame, show_image_on_window, background_substraction, show_image_with_boxes
+from boxes_utils import get_centroids, centroids_distance
 from Detector import Detector
+import numpy as np
+
 
 
 PATH_TO_DATA_DIRECTORY = os.path.join(".", "data")
@@ -39,6 +40,9 @@ def main() -> None:
 
     frame = 1
     
+    last_state = None
+    last_frame = None
+    
     for file_name in list_of_files:
         file_format = file_regex_pattern.search(file_name).group()
 
@@ -47,10 +51,26 @@ def main() -> None:
             print(file_name)
 
             video = load_video(PATH_TO_DATA_DIRECTORY, file_name)
+            last_frame = read_frame(video, PROCESSING_FPS)
             
             while frame is not None:
                 frame = read_frame(video, PROCESSING_FPS)
+                gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                
+                movement_mask = background_substraction(frame, last_frame)
+                
                 res, bounding_boxes = det.detect_cars(frame)
+                
+                current_state, boxes = get_centroids(bounding_boxes, movement_mask, gray_frame)
+                
+                show_image_with_boxes(frame, boxes)    
+                
+                
+                if(isinstance(last_state, np.ndarray)):
+                    dist = centroids_distance(current_state, last_state)
+                last_state = current_state
+                last_frame = frame
+            
                 
 
 

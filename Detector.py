@@ -39,11 +39,11 @@ class Detector():
         show_image_on_window(img)
         boxes = result.boxes
 
-        bounding_boxes = np.array(boxes.xyxy, dtype='int32')
+        #bounding_boxes = np.array(boxes.xyxy, dtype='int32')
 
         #bounding_box = self.__choose_best_result(bounding_boxes, image)
 
-        return result, bounding_boxes
+        return result, boxes
 
     @property
     def model(self) -> str:
