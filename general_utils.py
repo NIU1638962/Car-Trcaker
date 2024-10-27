@@ -9,10 +9,7 @@ import os
 import cv2
 import numpy as np
 
-from ultralytics import YOLO
-
 from math import ceil
-
 
 
 def create_path(path: str) -> None:
@@ -113,7 +110,10 @@ def read_image(path: str, name: str) -> np.ndarray:
     return cv2.imread(full_file_name)
 
 
-# def read_frame(video: cv2.VideoCapture, fps: float | None) -> np.ndarray | None:
+# def read_frame(
+#         video: cv2.VideoCapture,
+#         fps: float | None
+# ) -> np.ndarray | None:
 def read_frame(video: cv2.VideoCapture, fps: float) -> np.ndarray:
     """
     Read the frames of a video.
@@ -150,10 +150,8 @@ def read_frame(video: cv2.VideoCapture, fps: float) -> np.ndarray:
         video.read()
 
     __, frame = video.read()
-    
 
     return frame
-
 
 
 def remove_directory(path: str) -> None:
@@ -182,7 +180,7 @@ def remove_directory(path: str) -> None:
     os.rmdir(path)
 
 
-def save_image(image: np.array, path: str, name: str) -> None:
+def save_image(image: np.ndarray, path: str, name: str):
     """
     Save as a file a given image using OpenCV.
 
@@ -205,7 +203,7 @@ def save_image(image: np.array, path: str, name: str) -> None:
     cv2.imwrite(os.path.join(path, name), image)
 
 
-def show_image_on_window(image: np.array, window_name: str = "Image",
+def show_image_on_window(image: np.ndarray, window_name: str = "Image",
                          window_size: int = 1000) -> None:
     """
     Display the image on window.
@@ -226,50 +224,18 @@ def show_image_on_window(image: np.array, window_name: str = "Image",
 
     """
     scale = max(image.shape[:2]) / window_size
+
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+
     cv2.resizeWindow(window_name, int(
         image.shape[1] // scale), int(image.shape[0] // scale))
+
     cv2.imshow(window_name, image)
+
     cv2.waitKey(0)
+
     cv2.destroyWindow(window_name)
 
-
-def show_image_with_boxes(frame , boxes):
-    for box in boxes:
-        x_min, y_min, x_max, y_max = np.array(box.xyxy, dtype='int32').squeeze(0)
-        clase = box.cls[0]
-        conf = box.conf[0]
-        # Dibujar el rectángulo
-        cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
-        # Añadir texto (clase y confianza)
-        print(x_min, y_min, x_max, y_max, clase, conf)
-        cv2.putText(frame, f"{clase}: {conf:.2f}", (x_min, y_min - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-    
-    cv2.imshow('Image', frame)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    
-    
-def background_substraction(frame, last_frame): 
-
-    gris1 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    gris2 = cv2.cvtColor(last_frame, cv2.COLOR_BGR2GRAY)
-    diferencia = cv2.absdiff(gris1, gris2)
-    
-    #diferencia = np.abs(frame-last_frame)
-    
-    _, mascara_movimiento = cv2.threshold(diferencia, 30, 255, cv2.THRESH_BINARY)
-    mascara_movimiento = cv2.dilate(mascara_movimiento, None, iterations=2)
-    #mascara_movimiento = cv2.cvtColor(mascara_movimiento, cv2.COLOR_GRAY2BGR)
-    
-    #frame = cv2.bitwise_and(frame, mascara_movimiento)
-    
-    cv2.imshow('Image', mascara_movimiento)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    
-    return mascara_movimiento
 
 if __name__ == "__main__":
     print(
