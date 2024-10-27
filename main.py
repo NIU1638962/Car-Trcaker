@@ -67,8 +67,6 @@ def main():
 
             last_frame = read_frame(video, PROCESSING_FPS)
 
-            last_bounding_boxes = Boxes()
-
             frame = read_frame(video, PROCESSING_FPS)
 
             while frame is not None:
@@ -102,8 +100,7 @@ def main():
                         )
                     )
 
-                vehicles.process(current_bounding_boxes,
-                                 last_bounding_boxes)
+                vehicles.process(current_bounding_boxes)
 
                 if (
                     isinstance(last_state, np.ndarray)
@@ -114,7 +111,6 @@ def main():
                 ):
                     dist = centroids_distance(current_state, last_state)
                 last_state = current_state
-                last_bounding_boxes = current_bounding_boxes
                 last_frame = frame
 
                 frame = read_frame(video, PROCESSING_FPS)
