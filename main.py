@@ -45,8 +45,6 @@ def main():
 
     car_detector = Detector(PATH_TO_MODEL, SHOW_RESULTS)
 
-    # frame = False
-
     last_state = None
 
     for file_name in list_of_files:
@@ -60,7 +58,7 @@ def main():
 
             video = load_video(PATH_TO_DATA_DIRECTORY, file_name)
 
-            duration_video = (video.get(cv2.CAP_PROP_FRAME_COUNT)
+            video_duration = (video.get(cv2.CAP_PROP_FRAME_COUNT)
                               * 1000) / video.get(cv2.CAP_PROP_FPS)
 
             last_frame = read_frame(video, PROCESSING_FPS)
@@ -112,9 +110,17 @@ def main():
 
             end_time = monotonic_ns()
 
-            time_lapsed = (end_time - start_time) // 1000000
+            time_elapsed = (end_time - start_time) / 1000000
 
-            print(time_lapsed, duration_video)
+            print(
+                f'Time elapsed: {time_elapsed} '
+                + f'({time_elapsed // (60 * 1000):.0f}min)'
+            )
+            print(
+                f'Duration video: {video_duration} '
+                + f'({video_duration // (60 * 1000):.0f}min)'
+            )
+            print(f'{time_elapsed / video_duration}')
 
     print(separator)
 

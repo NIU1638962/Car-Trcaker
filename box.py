@@ -11,7 +11,8 @@ class Box():
 
     __slots__ = ("__centroid", "__class_type", "__confiance", "__id", "__xyxy")
 
-    def __init__(self, xyxy, class_type: str | int | float, confiance: float):
+    # def __init__(self, xyxy, class_type: str | int | float, confiance: float):
+    def __init__(self, xyxy, class_type, confiance: float):
         self.__xyxy = tuple(
             [
                 int(coordinate) for coordinate, control in zip(xyxy, range(4))

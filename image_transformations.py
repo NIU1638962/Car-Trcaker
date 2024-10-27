@@ -35,10 +35,15 @@ def absolute_difference(
     return cv2.absdiff(image_1, image_2)
 
 
+# def add_boxes(
+#         image: np.ndarray,
+#         boxes: List[Tuple[int, int, int, int]],
+#         texts: List[str] | None = None,
+# ) -> np.ndarray:
 def add_boxes(
         image: np.ndarray,
         boxes: List[Tuple[int, int, int, int]],
-        texts: List[str] | None = None,
+        texts: List[str] = None,
 ) -> np.ndarray:
     """
     Add boxes with labels to an image.
@@ -54,7 +59,7 @@ def add_boxes(
         Image to add the boxes to, represented as numpy array.
     boxes : List[Tuple[integer, integer, integer, integer]]
         List of coordinates xyxy of the boxes.
-    texts : List[string] | None, optional
+    texts : List[string] or None, optional
         List of strings with the labels of each box. The default is None.
 
     Returns
@@ -355,10 +360,15 @@ def otsu_threshold(
     return result
 
 
+# def resize(
+#         image: np.ndarray,
+#         height: int | None = None,
+#         width: int | None = None
+# ) -> np.ndarray:
 def resize(
         image: np.ndarray,
-        height: int | None = None,
-        width: int | None = None
+        height: int = None,
+        width: int = None
 ) -> np.ndarray:
     """
     Resize image.

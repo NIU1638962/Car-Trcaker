@@ -59,7 +59,8 @@ class Boxes():
         for box in self.__boxes.values():
             yield box
 
-    def add_box(self, xyxy, class_type: str | int | float, confiance: float):
+    # def add_box(self, xyxy, class_type: str | int | float, confiance: float):
+    def add_box(self, xyxy, class_type, confiance: float):
         """
         Add a Box to the data structure.
 
@@ -67,7 +68,7 @@ class Boxes():
         ----------
         xyxy : TYPE
             Coordinates xyxy of the box.
-        class_type : string | integer | float
+        class_type : string or integer or float
             Class type of the box.
         confiance : float
             Confiane of the class detected.
