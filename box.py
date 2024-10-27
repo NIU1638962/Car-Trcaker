@@ -4,6 +4,8 @@ Created on Sun Oct 27 02:18:38 2024
 
 @author: Joel Tapia Salvador
 """
+import numpy as np
+
 from typing import Tuple
 
 
@@ -13,7 +15,7 @@ class Box():
 
     # def __init__(self, xyxy, class_type: str | int | float, confiance: float):
     def __init__(self, xyxy, class_type, confiance: float):
-        self.__xyxy = tuple(
+        self.__xyxy = np.array(
             [
                 int(coordinate) for coordinate, control in zip(xyxy, range(4))
             ]
@@ -110,7 +112,7 @@ class Box():
         self.__calculate_centroid()
 
     def __calculate_centroid(self):
-        self.__centroid = tuple(
+        self.__centroid = np.array(
             [
                 (self.__xyxy[2] + self.__xyxy[0]) / 2,
                 (self.__xyxy[3] + self.__xyxy[1]) / 2
@@ -118,13 +120,13 @@ class Box():
         )
 
     @property
-    def centroid(self) -> Tuple[int, int]:
+    def centroid(self) -> np.ndarray:
         """
         Get centroid of the box.
 
         Returns
         -------
-        Tuple[integer, integer]
+        numpy array
             Centroid of the box.
 
         """
@@ -187,13 +189,13 @@ class Box():
         self.__id = value
 
     @property
-    def xyxy(self) -> Tuple[int, int, int, int]:
+    def xyxy(self) -> np.ndarray:
         """
         Get xyxyx coordinates of the box.
 
         Returns
         -------
-        Tuple[int, int, int, int]
+        numpy array
             xyxy coordinated of the box.
 
         """

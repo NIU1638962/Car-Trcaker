@@ -10,13 +10,15 @@ import re
 
 import numpy as np
 
-
+from math import ceil
 from time import monotonic_ns
 
+from boxes import Boxes
 from boxes_utils import centroids_distance
 from detector import Detector
 from general_utils import load_video, read_frame, show_image_on_window
 from image_transformations import add_boxes, background_substraction
+from vehicles import Vehicles
 
 
 PATH_TO_DATA_DIRECTORY = os.path.join(".", "data")
@@ -47,6 +49,8 @@ def main():
 
     last_state = None
 
+    vehicles = Vehicles()
+
     for file_name in list_of_files:
         file_format = file_regex_pattern.search(file_name).group()
 
@@ -63,15 +67,18 @@ def main():
 
             last_frame = read_frame(video, PROCESSING_FPS)
 
+            last_bounding_boxes = Boxes()
+
             frame = read_frame(video, PROCESSING_FPS)
 
             while frame is not None:
 
                 movement_mask = background_substraction(frame, last_frame)
 
-                bounding_boxes = car_detector.detect_cars(frame, SHOW_RESULTS)
+                current_bounding_boxes = car_detector.detect_cars(
+                    frame, SHOW_RESULTS)
 
-                bounding_boxes.filter_boxes(movement_mask)
+                current_bounding_boxes.filter_boxes(movement_mask)
 
                 coordinates_bounding_boxes = []
 
@@ -79,7 +86,7 @@ def main():
 
                 labels = []
 
-                for box in bounding_boxes:
+                for box in current_bounding_boxes:
                     coordinates_bounding_boxes.append(box.xyxy)
                     current_state.append(box.centroid)
                     labels.append(f'{box.class_type}: {box.confiance:.2}')
@@ -95,6 +102,9 @@ def main():
                         )
                     )
 
+                vehicles.process(current_bounding_boxes,
+                                 last_bounding_boxes)
+
                 if (
                     isinstance(last_state, np.ndarray)
                 ) and (
@@ -104,6 +114,7 @@ def main():
                 ):
                     dist = centroids_distance(current_state, last_state)
                 last_state = current_state
+                last_bounding_boxes = current_bounding_boxes
                 last_frame = frame
 
                 frame = read_frame(video, PROCESSING_FPS)
@@ -114,13 +125,13 @@ def main():
 
             print(
                 f'Time elapsed: {time_elapsed} '
-                + f'({time_elapsed // (60 * 1000):.0f}min)'
+                + f'({ceil(time_elapsed // (60 * 1000)):.0f} min)'
             )
             print(
                 f'Duration video: {video_duration} '
-                + f'({video_duration // (60 * 1000):.0f}min)'
+                + f'({ceil(video_duration / (60 * 1000)):.0f} min)'
             )
-            print(f'{time_elapsed / video_duration}')
+            print(f'Real time: {(time_elapsed / video_duration) <= 1}')
 
     print(separator)
 
