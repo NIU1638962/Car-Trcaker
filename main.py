@@ -24,6 +24,7 @@ from controller import Controller
 import json
 
 PATH_TO_DATA_DIRECTORY = os.path.join(".", "data")
+RESULT_FILE = "result.json"
 PROCESSING_FPS = 5
 
 ACCEPTED_FILE_FORMATS = (".mp4")
@@ -42,7 +43,7 @@ def main():
     Returns
     -------
     None.
-    
+
 
     """
     file_regex_pattern = re.compile(r"(?:\.[a-zA-Z0-9]+$)")
@@ -73,12 +74,12 @@ def main():
             last_frame = read_frame(video, PROCESSING_FPS)
 
             frame = read_frame(video, PROCESSING_FPS)
-            
-            up = 0 
+
+            up = 0
             down = 0
-            
+
             cont = Controller()
-            
+
             while frame is not None:
 
                 movement_mask = background_substraction(frame, last_frame)
@@ -109,16 +110,14 @@ def main():
                             labels,
                         )
                     )
-                
-                
-                if(len(current_bounding_boxes)>0):
+
+                if (len(current_bounding_boxes) > 0):
                     show_image_on_window(add_boxes(
                         frame,
                         coordinates_bounding_boxes,
                         labels,
                     ), "frame")
-                
-            
+
                 vehicles.process(current_bounding_boxes, cont)
 
                 if (
@@ -131,23 +130,23 @@ def main():
                     dist = centroids_distance(current_state, last_state)
                 last_state = current_state
                 last_frame = frame
-                
-                if(vehicles.up > up or vehicles.down > down):
+
+                if (vehicles.up > up or vehicles.down > down):
                     up = vehicles.up
                     down = vehicles.down
                     print("up:", up, "    down:", down)
                     timestamps.append(video.get(cv2.CAP_PROP_POS_MSEC))
                     show_image_on_window(last_frame, "Last_frame")
-                    
+
                     show_image_on_window(add_boxes(
                         frame,
                         coordinates_bounding_boxes,
                         labels,
                     ), "frame")
-                    
+
                 frame = read_frame(video, PROCESSING_FPS)
                 cont.time()
-                
+
             end_time = monotonic_ns()
 
             time_elapsed = (end_time - start_time) / 1000000
@@ -163,12 +162,13 @@ def main():
             print(f'Real time: {(time_elapsed / video_duration) <= 1}')
             print(f'Vehicles Up: {vehicles.up}')
             print(f'Vehicles Down: {vehicles.down}')
-            
+
             d = {}
             d[file_name] = {'down': vehicles.down, 'up': vehicles.up}
-            with open('results.json', 'w') as file:
+            with open(RESULT_FILE, 'w') as file:
                 json.dump(d, file)
     print(separator)
+
 
 if __name__ == "__main__":
     main()
