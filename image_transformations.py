@@ -246,10 +246,10 @@ def draw_circle(
         center: Tuple[int, int],
         radius: int = 1,
         colour: Tuple[int, int, int] = (255, 255, 255),
-        thickness: int = -1
+        thickness: int = -1,
 ) -> np.ndarray:
     """
-
+    Draw a circle on the image given.
 
     Parameters
     ----------
@@ -273,6 +273,42 @@ def draw_circle(
     image = deepcopy(image)
 
     cv2.circle(image, center, radius, colour, thickness)
+
+    return image
+
+
+def draw_line(
+        image: np.ndarray,
+        point_1: Tuple[int, int],
+        point_2: Tuple[int, int],
+        colour: Tuple[int, int, int] = (255, 255, 255),
+        thickness: int = 1,
+) -> np.ndarray:
+    """
+    Draw a line in the image given.
+
+    Parameters
+    ----------
+    image : numpy array
+        Image to draw a line on, represented as a numpy array.
+    point_1 : Tuple[integer, integer]
+        First point of the line.
+    point_2 : Tuple[integer, integer]
+        Second point of the line.
+    colour : Tuple[integer, integer, integer], optional
+        Colour of the line to be drawn. The default is (255, 255, 255).
+    thickness : int, optional
+        Thickness of the line to be drawn. The default is 1.
+
+    Returns
+    -------
+    image : numpy array
+        Image with the line drawn, represented as a numpy array.
+
+    """
+    image = deepcopy(image)
+
+    cv2.line(image, point_1, point_2, colour, thickness)
 
     return image
 
@@ -322,7 +358,7 @@ def draw_rectangle(
 def gaussian_blur(
         image: np.ndarray,
         kernel_size: Tuple[int, int],
-        mu: int = 0
+        mu: int = 0,
 ) -> np.ndarray:
     """
     Blur an image applying Gaussian  Blur.
