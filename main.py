@@ -48,14 +48,10 @@ def main():
     """
     file_regex_pattern = re.compile(r"(?:\.[a-zA-Z0-9]+$)")
 
-    list_of_files = [os.listdir(PATH_TO_DATA_DIRECTORY)[5]]
+    list_of_files = os.listdir(PATH_TO_DATA_DIRECTORY)
 
     car_detector = Detector(PATH_TO_MODEL, SHOW_RESULTS)
-
-    last_state = None
-
-    vehicles = Vehicles()
-    timestamps = []
+    d = {}
 
     for file_name in list_of_files:
         file_format = file_regex_pattern.search(file_name).group()
@@ -78,7 +74,9 @@ def main():
             up = 0
             down = 0
 
+            vehicles = Vehicles()
             cont = Controller()
+            last_state = None
 
             while frame is not None:
 
@@ -101,7 +99,7 @@ def main():
                     labels.append(f'{box.class_type}: {box.confiance:.2}')
 
                 current_state = np.array(current_state)
-
+                
                 if SHOW_RESULTS:
                     show_image_on_window(
                         add_boxes(
@@ -110,14 +108,14 @@ def main():
                             labels,
                         )
                     )
-
+                    """
                 if (len(current_bounding_boxes) > 0):
                     show_image_on_window(add_boxes(
                         frame,
                         coordinates_bounding_boxes,
                         labels,
                     ), "frame")
-
+"""
                 vehicles.process(current_bounding_boxes, cont)
 
                 if (
@@ -130,7 +128,7 @@ def main():
                     dist = centroids_distance(current_state, last_state)
                 last_state = current_state
                 last_frame = frame
-
+                """
                 if (vehicles.up > up or vehicles.down > down):
                     up = vehicles.up
                     down = vehicles.down
@@ -143,7 +141,7 @@ def main():
                         coordinates_bounding_boxes,
                         labels,
                     ), "frame")
-
+                    """
                 frame = read_frame(video, PROCESSING_FPS)
                 cont.time()
 
@@ -163,11 +161,14 @@ def main():
             print(f'Vehicles Up: {vehicles.up}')
             print(f'Vehicles Down: {vehicles.down}')
 
-            d = {}
-            d[file_name] = {'down': vehicles.down, 'up': vehicles.up}
+            d[file_name] = {'down': vehicles.down, 'up': vehicles.up, 
+                            'Real_time': (time_elapsed / video_duration) <= 1, 
+                            'Time_elapsed': ceil(time_elapsed // (60 * 1000)), 
+                            'Video_duration': ceil(video_duration / (60 * 1000))}
             with open(RESULT_FILE, 'w') as file:
                 json.dump(d, file)
-    print(separator)
+                
+            print(separator)
 
 
 if __name__ == "__main__":

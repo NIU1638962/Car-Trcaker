@@ -49,7 +49,7 @@ class Vehicles():
                 self.__vehicles[new_box.identifier] = self.__previous_mapping[min_id]
             else:
                 self.__vehicles[new_box.identifier] = uuid.uuid4()
-                if(new_box.centroid[1]>250):
+                if(new_box.centroid[1]>280):
                     #control_deque = (len(new_boxes) > x for x in self.__last_num_boxes)
                     control_deque = True
                     i = 1
