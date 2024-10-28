@@ -128,7 +128,10 @@ class Boxes():
             for j in range (i+1, len(boxs_ids)):
                 dist = centroids_distance(np.array([cents[i]]), np.array([cents[j]]))
                 if(dist[0]<4):
-                    del self.__boxes[boxs_ids[j]]
+                    try:
+                        del self.__boxes[boxs_ids[i]]
+                    except:
+                        pass
             
         
                 

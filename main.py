@@ -21,7 +21,7 @@ from image_transformations import add_boxes, background_substraction
 from vehicles import Vehicles
 
 from controller import Controller
-
+import json
 
 PATH_TO_DATA_DIRECTORY = os.path.join(".", "data")
 PROCESSING_FPS = 5
@@ -42,11 +42,12 @@ def main():
     Returns
     -------
     None.
+    
 
     """
     file_regex_pattern = re.compile(r"(?:\.[a-zA-Z0-9]+$)")
 
-    list_of_files = [os.listdir(PATH_TO_DATA_DIRECTORY)[4]]
+    list_of_files = [os.listdir(PATH_TO_DATA_DIRECTORY)[5]]
 
     car_detector = Detector(PATH_TO_MODEL, SHOW_RESULTS)
 
@@ -108,14 +109,15 @@ def main():
                             labels,
                         )
                     )
-                """
+                
+                
                 if(len(current_bounding_boxes)>0):
                     show_image_on_window(add_boxes(
                         frame,
                         coordinates_bounding_boxes,
                         labels,
                     ), "frame")
-                """    
+                
             
                 vehicles.process(current_bounding_boxes, cont)
 
@@ -129,7 +131,7 @@ def main():
                     dist = centroids_distance(current_state, last_state)
                 last_state = current_state
                 last_frame = frame
-                """
+                
                 if(vehicles.up > up or vehicles.down > down):
                     up = vehicles.up
                     down = vehicles.down
@@ -142,10 +144,10 @@ def main():
                         coordinates_bounding_boxes,
                         labels,
                     ), "frame")
-                """    
+                    
                 frame = read_frame(video, PROCESSING_FPS)
                 cont.time()
-
+                
             end_time = monotonic_ns()
 
             time_elapsed = (end_time - start_time) / 1000000
@@ -161,6 +163,11 @@ def main():
             print(f'Real time: {(time_elapsed / video_duration) <= 1}')
             print(f'Vehicles Up: {vehicles.up}')
             print(f'Vehicles Down: {vehicles.down}')
+            
+            d = {}
+            d[file_name] = {'down': vehicles.down, 'up': vehicles.up}
+            with open('results.json', 'w') as file:
+                json.dump(d, file)
     print(separator)
 
 if __name__ == "__main__":
