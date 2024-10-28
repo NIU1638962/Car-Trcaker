@@ -241,12 +241,48 @@ def dilate(
     return cv2.dilate(image, kernel_size, iterations=iterations)
 
 
+def draw_circle(
+        image: np.ndarray,
+        center: Tuple[int, int],
+        radius: int = 1,
+        colour: Tuple[int, int, int] = (255, 255, 255),
+        thickness: int = -1
+) -> np.ndarray:
+    """
+
+
+    Parameters
+    ----------
+    image : numpy array
+        Image to draw de circle on, represented as numpy array.
+    center : Tuple[int, int]
+        Center of the circle.
+    radius : integer, optional
+        Radius of the circle. The default is 1.
+    colour : Tuple[integer, integer, integer], optional
+        Colour of the circle drawn. The default is (255, 255, 255).
+    thickness : integer, optional
+        Thicknes of the circle. -1 for filled. The default is -1.
+
+    Returns
+    -------
+    image : numpy array
+        Image with the circle drawn, represented as numpy array.
+
+    """
+    image = deepcopy(image)
+
+    cv2.circle(image, center, radius, colour, thickness)
+
+    return image
+
+
 def draw_rectangle(
         image: np.ndarray,
         top_left_corner: Tuple[int, int],
         bottom_right_corner: Tuple[int, int],
         colour: Tuple[int, int, int] = (255, 255, 255),
-        thickness: int = 1,
+        thickness: int = -1,
 ) -> np.ndarray:
     """
     Draw a rectabgle on the image given.
@@ -262,7 +298,7 @@ def draw_rectangle(
     colour : Tuple[integer, integer, integer], optional
         Colour of the rectangle drawn. The default is (255, 255, 255).
     thickness : integer, optional
-        Thickness of the rectangle borders. The default is 1.
+        Thickness of the rectangle borders. -1 for filled. The default is 1.
 
     Returns
     -------
