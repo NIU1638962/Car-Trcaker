@@ -10,6 +10,9 @@ import numpy as np
 
 from box import Box
 
+from boxes_utils import centroids_distance
+
+
 
 class Boxes():
 
@@ -86,6 +89,7 @@ class Boxes():
 
         new_box.identifier = identifier
         self.__boxes[identifier] = new_box
+        
 
     def filter_boxes(self, movement_mask: np.ndarray):
         """
@@ -102,6 +106,8 @@ class Boxes():
 
         """
         boxes = [box for box in self.__boxes.values()]
+        cents= []
+        boxs_ids = []
         for box in boxes:
             segment = movement_mask[
                 box.xyxy[1]:box.xyxy[3], box.xyxy[0]:box.xyxy[2]
@@ -110,6 +116,21 @@ class Boxes():
             area = segment.shape[0]*segment.shape[1]
 
             movement = cv2.countNonZero(segment)
+            
 
             if area < 0 or movement / area < 0.4:
                 del self.__boxes[box.identifier]
+            else:
+                cents.append(box.centroid)
+                boxs_ids.append(box.identifier)
+                
+        for i in range (len(boxs_ids)):
+            for j in range (i+1, len(boxs_ids)):
+                dist = centroids_distance(np.array([cents[i]]), np.array([cents[j]]))
+                if(dist[0]<4):
+                    del self.__boxes[boxs_ids[j]]
+            
+        
+                
+    def __len__(self):
+        return len(self.__boxes)

@@ -11,7 +11,7 @@ from typing import Tuple
 
 class Box():
 
-    __slots__ = ("__centroid", "__class_type", "__confiance", "__id", "__xyxy")
+    __slots__ = ("__centroid", "__class_type", "__confiance", "__id", "__xyxy", "__assigned")
 
     # def __init__(self, xyxy, class_type: str | int | float, confiance: float):
     def __init__(self, xyxy, class_type, confiance: float):
@@ -20,6 +20,7 @@ class Box():
                 int(coordinate) for coordinate, control in zip(xyxy, range(4))
             ]
         )
+        self.__assigned = False
 
         if isinstance(class_type, str):
             self.__class_type = class_type
@@ -200,3 +201,11 @@ class Box():
 
         """
         return self.__xyxy
+    
+    @property
+    def assigned(self):
+        return self.__assigned
+    
+    @assigned.setter
+    def assigned(self, value):
+        self.__assigned = value

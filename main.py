@@ -20,6 +20,8 @@ from general_utils import load_video, read_frame, show_image_on_window
 from image_transformations import add_boxes, background_substraction
 from vehicles import Vehicles
 
+from controller import Controller
+
 
 PATH_TO_DATA_DIRECTORY = os.path.join(".", "data")
 PROCESSING_FPS = 5
@@ -28,6 +30,7 @@ ACCEPTED_FILE_FORMATS = (".mp4")
 PATH_TO_MODEL = os.path.join('.', 'models', 'yolov8n.pt')
 
 SHOW_RESULTS = False
+
 
 separator = "\n" + "=" * os.get_terminal_size()[0]
 
@@ -43,13 +46,14 @@ def main():
     """
     file_regex_pattern = re.compile(r"(?:\.[a-zA-Z0-9]+$)")
 
-    list_of_files = [os.listdir(PATH_TO_DATA_DIRECTORY)[1]]
+    list_of_files = [os.listdir(PATH_TO_DATA_DIRECTORY)[4]]
 
     car_detector = Detector(PATH_TO_MODEL, SHOW_RESULTS)
 
     last_state = None
 
     vehicles = Vehicles()
+    timestamps = []
 
     for file_name in list_of_files:
         file_format = file_regex_pattern.search(file_name).group()
@@ -68,7 +72,12 @@ def main():
             last_frame = read_frame(video, PROCESSING_FPS)
 
             frame = read_frame(video, PROCESSING_FPS)
-
+            
+            up = 0 
+            down = 0
+            
+            cont = Controller()
+            
             while frame is not None:
 
                 movement_mask = background_substraction(frame, last_frame)
@@ -99,8 +108,16 @@ def main():
                             labels,
                         )
                     )
-
-                vehicles.process(current_bounding_boxes)
+                """
+                if(len(current_bounding_boxes)>0):
+                    show_image_on_window(add_boxes(
+                        frame,
+                        coordinates_bounding_boxes,
+                        labels,
+                    ), "frame")
+                """    
+            
+                vehicles.process(current_bounding_boxes, cont)
 
                 if (
                     isinstance(last_state, np.ndarray)
@@ -112,8 +129,22 @@ def main():
                     dist = centroids_distance(current_state, last_state)
                 last_state = current_state
                 last_frame = frame
-
+                """
+                if(vehicles.up > up or vehicles.down > down):
+                    up = vehicles.up
+                    down = vehicles.down
+                    print("up:", up, "    down:", down)
+                    timestamps.append(video.get(cv2.CAP_PROP_POS_MSEC))
+                    show_image_on_window(last_frame, "Last_frame")
+                    
+                    show_image_on_window(add_boxes(
+                        frame,
+                        coordinates_bounding_boxes,
+                        labels,
+                    ), "frame")
+                """    
                 frame = read_frame(video, PROCESSING_FPS)
+                cont.time()
 
             end_time = monotonic_ns()
 
@@ -128,9 +159,9 @@ def main():
                 + f'({ceil(video_duration / (60 * 1000)):.0f} min)'
             )
             print(f'Real time: {(time_elapsed / video_duration) <= 1}')
-
+            print(f'Vehicles Up: {vehicles.up}')
+            print(f'Vehicles Down: {vehicles.down}')
     print(separator)
-
 
 if __name__ == "__main__":
     main()

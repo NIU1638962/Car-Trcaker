@@ -150,6 +150,10 @@ def read_frame(video: cv2.VideoCapture, fps: float) -> np.ndarray:
         video.read()
 
     __, frame = video.read()
+    
+    if(frame is not None):
+        frame = frame[600:]
+
 
     return frame
 
