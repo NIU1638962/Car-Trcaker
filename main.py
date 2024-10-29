@@ -24,11 +24,11 @@ from controller import Controller
 import json
 
 PATH_TO_DATA_DIRECTORY = os.path.join(".", "data")
-RESULT_FILE = "result.json"
+RESULT_FILE = "result2.json"
 PROCESSING_FPS = 5
 
 ACCEPTED_FILE_FORMATS = (".mp4")
-PATH_TO_MODEL = os.path.join('.', 'models', 'yolov8n.pt')
+PATH_TO_MODEL = os.path.join('.', 'models', 'yolo11m.pt')
 
 SHOW_RESULTS = False
 
@@ -108,14 +108,14 @@ def main():
                             labels,
                         )
                     )
-                    """
+                """ 
                 if (len(current_bounding_boxes) > 0):
                     show_image_on_window(add_boxes(
                         frame,
                         coordinates_bounding_boxes,
                         labels,
                     ), "frame")
-"""
+                """
                 vehicles.process(current_bounding_boxes, cont)
 
                 if (
@@ -133,7 +133,7 @@ def main():
                     up = vehicles.up
                     down = vehicles.down
                     print("up:", up, "    down:", down)
-                    timestamps.append(video.get(cv2.CAP_PROP_POS_MSEC))
+                    
                     show_image_on_window(last_frame, "Last_frame")
 
                     show_image_on_window(add_boxes(
@@ -141,7 +141,7 @@ def main():
                         coordinates_bounding_boxes,
                         labels,
                     ), "frame")
-                    """
+                """    
                 frame = read_frame(video, PROCESSING_FPS)
                 cont.time()
 

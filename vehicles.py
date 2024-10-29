@@ -26,7 +26,7 @@ class Vehicles():
         self.__last_id = 0
         self.__up = 0
         self.__down = 0
-        self.__last_boxes = deque(maxlen = 5)
+        self.__last_boxes = deque(maxlen = 3)
 
     def __add_vehicle(self, box):
         self.__last_id += 1
@@ -49,7 +49,7 @@ class Vehicles():
                 self.__vehicles[new_box.identifier] = self.__previous_mapping[min_id]
             else:
                 self.__vehicles[new_box.identifier] = uuid.uuid4()
-                if(new_box.centroid[1]>280):
+                if(new_box.centroid[1]>270):
                     #control_deque = (len(new_boxes) > x for x in self.__last_num_boxes)
                     control_deque = True
                     i = 1
@@ -78,7 +78,7 @@ class Vehicles():
                 x_id = x_id[0]
                 for box_id, v_id in self.__previous_mapping.items():
                     if(v_id==x_id):
-                        if(self.__previous_boxes[box_id].centroid[1]>280):
+                        if(self.__previous_boxes[box_id].centroid[1]>270):
                             control_deque = True
                             if(control_deque):
                                 if(controller.control):
