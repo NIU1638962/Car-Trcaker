@@ -17,7 +17,7 @@ from boxes import Boxes
 from boxes_utils import centroids_distance
 from detector import Detector
 from general_utils import load_video, read_frame, show_image_on_window
-from image_transformations import add_boxes, background_substraction
+from image_transformations import add_boxes, background_substraction, draw_circle, draw_line
 from vehicles import Vehicles
 
 from controller import Controller
@@ -28,7 +28,7 @@ RESULT_FILE = "result2.json"
 PROCESSING_FPS = 5
 
 ACCEPTED_FILE_FORMATS = (".mp4")
-PATH_TO_MODEL = os.path.join('.', 'models', 'yolo11m.pt')
+PATH_TO_MODEL = os.path.join('.', 'models', 'yolov8n.pt')
 
 SHOW_RESULTS = False
 
@@ -84,6 +84,7 @@ def main():
 
                 current_bounding_boxes = car_detector.detect_cars(
                     frame, SHOW_RESULTS)
+                cont.current_boxes = current_bounding_boxes
 
                 current_bounding_boxes.filter_boxes(movement_mask)
 
@@ -108,8 +109,14 @@ def main():
                             labels,
                         )
                     )
-                """ 
+                """
                 if (len(current_bounding_boxes) > 0):
+                    frame = draw_line(
+                        frame, (0, 270), (frame.shape[1], 270), (0, 0, 255))
+
+                    for cent in current_state:
+                        frame = draw_circle(frame, (int(
+                            (cent[0])), int(cent[1])), 4, (0, 255, 0))
                     show_image_on_window(add_boxes(
                         frame,
                         coordinates_bounding_boxes,

@@ -82,7 +82,7 @@ class Vehicles():
                             control_deque = True
                             if(control_deque):
                                 if(controller.control):
-                                    if(abs(controller.centroid[0]-self.__previous_boxes[box_id].centroid[0])>30):
+                                    if(abs(controller.centroid[0]-self.__previous_boxes[box_id].centroid[0])>40):
                                         self.__down+=1
                                         controller.add_centroid(self.__previous_boxes[box_id].centroid)
                                 else:
